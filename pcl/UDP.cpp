@@ -128,24 +128,8 @@ float UDP(float matrix[16][1800],float &AZ)
 					flag = 2;
 					ps = i;
 					break;
-				}	
-				/*
-				if (t[3 + i] == 0)
-				{
-					A = t[2 + i] / 100;
-					if (A < 0.1 && flag == 0)
-					{
-						printf("-----------------------------------------------------------\n");
-						printf("Azimuth = %.2f \n", A);
-						flag = 1;
-						ps = i;
-						printf("Azimuth < 0.1 開始存取封包 %d \n", ps);
-						printf("-----------------------------------------------------------\n");
-					}
-				}
-				*/
+				}					
 			}
-
 		}
 		if (flag == 1)
 		{
@@ -222,16 +206,7 @@ float UDP(float matrix[16][1800],float &AZ)
 				break;
 			}
 			flag = 1;
-		}
-
-		/*
-		//now reply the client with the same data
-		if (sendto(s, buf, recv_len, 0, (struct sockaddr*) &si_other, slen) == SOCKET_ERROR)
-		{
-			printf("sendto() failed with error code : %d", WSAGetLastError());
-			exit(EXIT_FAILURE);
-		}
-		*/
+		}				
 	}
 	closesocket(s);
 	for (int i = 0; i < 1800; i++) //將Layer放到正確的位置
