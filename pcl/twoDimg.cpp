@@ -1,3 +1,10 @@
+/*
+/////////////////////////////////
+ver0.05
+-註解掉轉成RGB色彩方法
+/////////////////////////////////
+*/
+
 #include "UDP.h"
 #include <cstdio>
 #include <opencv2/opencv.hpp>
