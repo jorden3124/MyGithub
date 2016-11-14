@@ -28,7 +28,7 @@ using namespace std;
 
 
 
-
+/*
 void drawOptFlowMap(const Mat& flow, Mat& cflowmap, int step, const Scalar& color) 
 {
 	for (int y = 0; y < cflowmap.rows; y += step)
@@ -41,8 +41,9 @@ void drawOptFlowMap(const Mat& flow, Mat& cflowmap, int step, const Scalar& colo
 		}
 	}
 }
+*/
 
-
+/*
 void makecolorwheel(vector<Scalar> &colorwheel)
 {
 	int RY = 15;
@@ -61,7 +62,9 @@ void makecolorwheel(vector<Scalar> &colorwheel)
 	for (i = 0; i < BM; i++) colorwheel.push_back(Scalar(255 * i / BM, 0, 255));
 	for (i = 0; i < MR; i++) colorwheel.push_back(Scalar(255, 0, 255 - 255 * i / MR));
 }
+*/
 
+/*
 void motionToColor(Mat flow, Mat &color)
 {
 	if (color.empty())
@@ -126,6 +129,7 @@ void motionToColor(Mat flow, Mat &color)
 		}
 	}
 }
+*/
 
 // --------------
 // -----Main-----
