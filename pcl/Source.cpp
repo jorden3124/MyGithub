@@ -1,3 +1,13 @@
+/*
+/////////////////////////////////////////////////
+ver.0.05版
+-刪除不必要的函式
+-刪除opencv 相關
+-刪除深度轉二維呼叫
+/////////////////////////////////////////////////
+*/
+
+
 #include <iostream>
 #include <cstdio>
 #include <opencv2/opencv.hpp>
@@ -27,110 +37,6 @@ using namespace cv;
 using namespace std;
 
 
-
-/*
-void drawOptFlowMap(const Mat& flow, Mat& cflowmap, int step, const Scalar& color) 
-{
-	for (int y = 0; y < cflowmap.rows; y += step)
-	{
-		for (int x = 0; x < cflowmap.cols; x += step)
-		{
-			const Point2f& fxy = flow.at< Point2f>(y, x);
-			line(cflowmap, Point(x, y), Point(cvRound(x + fxy.x), cvRound(y + fxy.y)), color);
-			circle(cflowmap, Point(cvRound(x + fxy.x), cvRound(y + fxy.y)), 1, color, -1);
-		}
-	}
-}
-*/
-
-/*
-void makecolorwheel(vector<Scalar> &colorwheel)
-{
-	int RY = 15;
-	int YG = 6;
-	int GC = 4;
-	int CB = 11;
-	int BM = 13;
-	int MR = 6;
-
-	int i;
-
-	for (i = 0; i < RY; i++) colorwheel.push_back(Scalar(255, 255 * i / RY, 0));
-	for (i = 0; i < YG; i++) colorwheel.push_back(Scalar(255 - 255 * i / YG, 255, 0));
-	for (i = 0; i < GC; i++) colorwheel.push_back(Scalar(0, 255, 255 * i / GC));
-	for (i = 0; i < CB; i++) colorwheel.push_back(Scalar(0, 255 - 255 * i / CB, 255));
-	for (i = 0; i < BM; i++) colorwheel.push_back(Scalar(255 * i / BM, 0, 255));
-	for (i = 0; i < MR; i++) colorwheel.push_back(Scalar(255, 0, 255 - 255 * i / MR));
-}
-*/
-
-/*
-void motionToColor(Mat flow, Mat &color)
-{
-	if (color.empty())
-		color.create(flow.rows, flow.cols, CV_8UC3);
-
-	static vector<Scalar> colorwheel; //Scalar r,g,b  
-	if (colorwheel.empty())
-		makecolorwheel(colorwheel);
-
-	// determine motion range:  
-	float maxrad = -1;
-
-	// Find max flow to normalize fx and fy  
-	for (int i = 0; i < flow.rows; ++i)
-	{
-		for (int j = 0; j < flow.cols; ++j)
-		{
-			Vec2f flow_at_point = flow.at<Vec2f>(i, j);
-			float fx = flow_at_point[0];
-			float fy = flow_at_point[1];
-			if ((fabs(fx) >  UNKNOWN_FLOW_THRESH) || (fabs(fy) >  UNKNOWN_FLOW_THRESH))
-				continue;
-			float rad = sqrt(fx * fx + fy * fy);
-			maxrad = maxrad > rad ? maxrad : rad;
-		}
-	}
-
-	for (int i = 0; i < flow.rows; ++i)
-	{
-		for (int j = 0; j < flow.cols; ++j)
-		{
-			uchar *data = color.data + color.step[0] * i + color.step[1] * j;
-			Vec2f flow_at_point = flow.at<Vec2f>(i, j);
-
-			float fx = flow_at_point[0] / maxrad;
-			float fy = flow_at_point[1] / maxrad;
-			if ((fabs(fx) >  UNKNOWN_FLOW_THRESH) || (fabs(fy) >  UNKNOWN_FLOW_THRESH))
-			{
-				data[0] = data[1] = data[2] = 0;
-				continue;
-			}
-			float rad = sqrt(fx * fx + fy * fy);
-
-			float angle = atan2(-fy, -fx) / CV_PI;
-			float fk = (angle + 1.0) / 2.0 * (colorwheel.size() - 1);
-			int k0 = (int)fk;
-			int k1 = (k0 + 1) % colorwheel.size();
-			float f = fk - k0;
-			//f = 0; // uncomment to see original color wheel  
-
-			for (int b = 0; b < 3; b++)
-			{
-				float col0 = colorwheel[k0][b] / 255.0;
-				float col1 = colorwheel[k1][b] / 255.0;
-				float col = (1 - f) * col0 + f * col1;
-				if (rad <= 1)
-					col = 1 - rad * (1 - col); // increase saturation with radius  
-				else
-					col *= .75; // out of range  
-				data[2 - b] = (int)(255.0 * col);
-			}
-		}
-	}
-}
-*/
-
 // --------------
 // -----Main-----
 // --------------
@@ -141,20 +47,7 @@ int main(int argc, char** argv)
 	float lidar_Z[16][1800];
 	float relidar_Z[16][1800];
 	int fps = 0;
-	/*
-	Mat preimg(16, 1800, CV_8U);
-	Mat img(16, 1800, CV_8U);
-	Mat prersimg;
-	Mat rsimg;
-	Mat motion2color;
-	*/
-	/*
-	UDP(relidar_Z,AZ);
-
-	twoDimg(lidar_Z, preimg);		
-
-	resize(preimg, prersimg, Size(1260, 160), 0, 0, CV_INTER_LINEAR);
-	*/
+	
 	pcl::visualization::PCLVisualizer viewer("point cloud");
 	
 
@@ -166,16 +59,7 @@ int main(int argc, char** argv)
 
 		AZ = 0;
 
-		UDP(lidar_Z,AZ);
-
-		//printf("Azimuth = %.2f \n", AZ);
-
-		//twoDimg(lidar_Z, img);
-
-		//resize(img, rsimg, Size(1260, 160), 0, 0, CV_INTER_LINEAR);
-
-		//imshow("PointTO2dimage", rsimg);
-		//cvWaitKey(1);
+		UDP(lidar_Z,AZ);		
 
 		pcl::PointCloud<pcl::PointXYZ>::Ptr basic_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>);
 		pcl::PointCloud<pcl::PointXYZRGBA>::Ptr point_cloud_ptr(new pcl::PointCloud<pcl::PointXYZRGBA>);
@@ -262,57 +146,6 @@ int main(int argc, char** argv)
 
 		viewer.updateText(ss.str(), 10, 10, "frameText");
 				
-		viewer.spinOnce(1);
-		
-		/*
-		Mat flow;
-
-        calcOpticalFlowFarneback(prersimg, rsimg, flow, 0.5, 3, 15, 3, 5, 1.2, 0);
-
-	    Mat cflow;
-		
-	    cvtColor(prersimg, cflow, CV_GRAY2BGR);
-		
-	    drawOptFlowMap(flow, cflow, 10, CV_RGB(0, 255, 0));
-	
-	    imshow("OpticalFlowFarneback", cflow);
-	    imshow("PointTO2dimage", prersimg);
-		*/
-
-	   //motionToColor(flow, motion2color);
-	   //imshow("flow", motion2color);		
-
-	    /*Mat xy[2];
-		
-		split(flow, xy);
-
-		Mat magnitude, angle;
-
-		cartToPolar(xy[0], xy[1], magnitude, angle, true);
-
-		double mag_max;
-
-		minMaxLoc(magnitude, 0, &mag_max);
-
-		magnitude.convertTo(magnitude, -1, 1.0 / mag_max);
-
-		Mat _hsv[3], hsv;
-
-		_hsv[0] = angle;
-		_hsv[1] = Mat::ones(angle.size(), CV_32F);
-	    _hsv[2] = magnitude;		
-
-		merge(_hsv, 3, hsv);
-
-		Mat bgr;
-
-		cvtColor(hsv, bgr, COLOR_HSV2BGR);
-
-		imshow("SimpleFlow", bgr);*/
-				 
-		//cvWaitKey(1);
-
-		//preimg = img;		
-		//resize(preimg, prersimg, Size(1260, 160), 0, 0, CV_INTER_LINEAR);
+		viewer.spinOnce(1);		
 	}			
 }
