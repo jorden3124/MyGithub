@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> origin/master
+
 /*
 /////////////////////////////////
 ver0.05
@@ -10,10 +6,6 @@ ver0.05
 /////////////////////////////////
 */
 
-<<<<<<< HEAD
->>>>>>> 9029f47... ver.0.05
-=======
->>>>>>> origin/master
 #include "UDP.h"
 #include <cstdio>
 #include <opencv2/opencv.hpp>
