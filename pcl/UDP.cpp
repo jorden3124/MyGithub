@@ -1,7 +1,8 @@
 /*
 /////////////////////////////////////////////////
-ver.0.05版
--刪除不必要的函式
+ver.0.06版
+-不限定從零開始存深度值
+-刪除不必要的迴圈
 /////////////////////////////////////////////////
 */
 
@@ -25,7 +26,7 @@ using namespace std;
 #define TRFC 4294967040
 #define PI 3.14159265359
 
-float UDP(float matrix[16][1800],float &AZ)
+float UDP(float matrix[16][1800],float (&AZ)[900])
 {
 	SOCKET s;
 	struct sockaddr_in server, si_other;
@@ -71,9 +72,10 @@ float UDP(float matrix[16][1800],float &AZ)
 	/////////////////////////////////
 	int x = 0;
 	int y = 0;
+	int z = 0;
 	int flag = 0;
 	int first = 0;
-	float A = 0;
+	float A =0;
 	////////////////////////////////
 	//keep listening for data
 	while (1)
@@ -107,46 +109,21 @@ float UDP(float matrix[16][1800],float &AZ)
 			else
 				t[i] = (unsigned int)buf[i];
 
-		}
+		}		
 		if (flag == 0)
-		{
-			for (int i = 0; i < 1200; i += 100)
-			{
-				
-				A = t[3 + i] * 256 + t[2 + i];
-				A = A / 100;
-				//if (A >359.7 || A < 0.4)
-				//printf("Azimuth = %.2f \n", A);
-				if (A >=359.9 || A <=0.1)
-				{					
-						//printf("-----------------------------------------------------------\n");
-						//printf("Azimuth = %.2f \n", A);
-						AZ = A;
-						//printf("Azimuth = %.2f \n", AZ);
-						flag = 1;
-						ps = i;
-						break;
-						//printf("Azimuth < 0.1 開始存取封包 %d \n", ps);
-						//printf("-----------------------------------------------------------\n");					
-				}		
-				else if (A < 359.9 && A >359.7 )
-				{
-					//printf("Azimuth = %.2f \n", A);
-					AZ = A;
-					//printf("Azimuth = %.2f \n", AZ);
-					flag = 2;
-					ps = i;
-					break;
-				}					
-			}
+		{					
+			flag = 1;
+			ps = 0;			
 		}
 		if (flag == 1)
 		{
 			//每100個byte為兩次掃描 傳一次有1200byte
 			for (int j = ps; j < 1200; j += 100)
 			{
-				//A = t[3 + j] * 256 + t[2 + j];
-				//A = A / 100;
+				A = t[3 + j] * 256 + t[2 + j];
+				A = A / 100;
+				AZ[z] = A;
+				z++;
 				//printf("A = %.2f j = %d ps = %d \n", A ,j,ps);
 				for (int i = 0; i < 94; i += 3) //取出第5個和第6個byte做運算得到距離
 				{					
@@ -169,53 +146,14 @@ float UDP(float matrix[16][1800],float &AZ)
 				{
 					break;
 				}
+
 			}
 			if (y == 1800)
 			{
 				break;
 			}
-		}
-		else if (flag == 2)
-		{
-			//每100個byte為兩次掃描 傳一次有1200byte
-			for (int j = ps; j < 1200; j += 100)
-			{
-				//A = t[3 + j] * 256 + t[2 + j];
-				//A = A / 100;
-				//printf("A = %.2f j = %d ps = %d \n", A ,j,ps);
-				for (int i = 0; i < 94; i += 3) //取出第5個和第6個byte做運算得到距離
-				{
-					float tmp = 0;
-					if (first = 0)
-					{
-						i = 48;
-						first = 1;
-					}									
-					tmp = (float)t[j + 4 + i] + ((float)t[j + 5 + i] * 256);
-					tmp = tmp / 500; // T*2/1000
-					matrix[x][y] = tmp;
-					x++;
-					if (x == 16)
-					{
-						x = 0;
-						y++;
-					}
-					if (y == 1800)
-					{
-						break;
-					}
-				}
-				if (y == 1800)
-				{
-					break;
-				}
-			}
-			if (y == 1800)
-			{
-				break;
-			}
-			flag = 1;
-		}				
+		}		
+		
 	}
 	closesocket(s);
 	for (int i = 0; i < 1800; i++) //將Layer放到正確的位置

@@ -5,6 +5,6 @@
 
 using namespace cv;
 
-float UDP(float PC_matrix[16][1800],float &AZ);
+float UDP(float PC_matrix[16][1800],float (&AZ)[900]);
 
 cv::Mat twoDimg(float PC_matrix[16][1800], Mat img);

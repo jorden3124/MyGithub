@@ -1,9 +1,8 @@
 /*
 /////////////////////////////////////////////////
-ver.0.05版
--刪除不必要的函式
--刪除opencv 相關
--刪除深度轉二維呼叫
+ver.0.06版
+- 將所有封包角度存到AZ陣列
+- 不考慮起始角度
 /////////////////////////////////////////////////
 */
 
@@ -43,7 +42,8 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-	float AZ=0;
+	//float AZ =0;
+	float AZ[900];
 	float lidar_Z[16][1800];
 	float relidar_Z[16][1800];
 	int fps = 0;
@@ -56,27 +56,29 @@ int main(int argc, char** argv)
 	while (1)
 	{
 		memset(lidar_Z, 0, sizeof(lidar_Z));
+		memset(AZ, 0, sizeof(AZ));
+		//AZ = 0;
 
-		AZ = 0;
-
-		UDP(lidar_Z,AZ);		
-
+		//UDP(lidar_Z,AZ);		
+		UDP(lidar_Z, AZ);
 		pcl::PointCloud<pcl::PointXYZ>::Ptr basic_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>);
 		pcl::PointCloud<pcl::PointXYZRGBA>::Ptr point_cloud_ptr(new pcl::PointCloud<pcl::PointXYZRGBA>);
 		float omega = 0;
 		float angle = 15;
-		float angle2 = AZ;
+		float angle2 = AZ[0];
 		uint8_t r(255), g(0), b(0);
 		for (int i = 0; i < 16; i++)
 		{
 			omega = angle * PI / 180;			
 
 			float alpha = 0;
+			int k = 0;
+			int f = 0;
 			for (int j = 0; j < 1800; j++)
 			{
 				pcl::PointXYZ basic_point;
-
-				alpha = angle2 * PI / 180;				
+				
+				alpha = angle2 * PI / 180;
 
 				basic_point.x = lidar_Z[i][j] * cos(omega) * sin(alpha);
 				basic_point.y = lidar_Z[i][j] * cos(omega) * cos(alpha);
@@ -115,10 +117,21 @@ int main(int argc, char** argv)
 				point.rgb = *reinterpret_cast<float*>(&rgb);
 
 				point_cloud_ptr->points.push_back(point);*/
-
-				angle2 = angle2 + 0.2;
+				angle2 = AZ[k];
+				if (f == 0)
+				{
+					angle2 = angle2 + 0.2;
+					f = 1;
+				}
+				else if (f == 1)
+				{
+					k++;
+					f = 0;
+				}								
 				if (angle2 >= 360)
 					angle2 = angle2 - 360;
+				//printf("angle2= %.2f \n", angle2);
+				
 				
 			}
 			angle = angle - 2;
