@@ -1,8 +1,8 @@
 /*
 /////////////////////////////////////////////////
-ver.0.06版
-- 將所有封包角度存到AZ陣列
-- 不考慮起始角度
+ver.0.07版
+- 修正影像缺少1~2度的情況
+
 /////////////////////////////////////////////////
 */
 
@@ -43,9 +43,9 @@ using namespace std;
 int main(int argc, char** argv)
 {
 	//float AZ =0;
-	float AZ[900];
-	float lidar_Z[16][1800];
-	float relidar_Z[16][1800];
+	float AZ[905];
+	float lidar_Z[16][1809];
+	float relidar_Z[16][1809];
 	int fps = 0;
 	
 	pcl::visualization::PCLVisualizer viewer("point cloud");
@@ -74,7 +74,7 @@ int main(int argc, char** argv)
 			float alpha = 0;
 			int k = 0;
 			int f = 0;
-			for (int j = 0; j < 1800; j++)
+			for (int j = 0; j < 1808; j++)
 			{
 				pcl::PointXYZ basic_point;
 				
@@ -117,23 +117,26 @@ int main(int argc, char** argv)
 				point.rgb = *reinterpret_cast<float*>(&rgb);
 
 				point_cloud_ptr->points.push_back(point);*/
-				angle2 = AZ[k];
+				
 				if (f == 0)
 				{
+					angle2 = AZ[k];
 					angle2 = angle2 + 0.2;
 					f = 1;
 				}
 				else if (f == 1)
 				{
-					k++;
-					f = 0;
+					k = k + 1;
+					angle2 = AZ[k];				
+					f = 0;	
+
 				}								
 				if (angle2 >= 360)
 					angle2 = angle2 - 360;
-				//printf("angle2= %.2f \n", angle2);
-				
-				
+				//printf("angle2= %.2f \n", angle2);			
+								
 			}
+			
 			angle = angle - 2;
 		}
 		basic_cloud_ptr->width = 1;
@@ -143,11 +146,11 @@ int main(int argc, char** argv)
 
 		//viewer.removePointCloud("cloud");
 
-		stringstream ss;
-		ss << "frame " << fps++;	
+		//stringstream ss;
+		//ss << "frame " << fps++;	
 		if (updatef == 0)
 		{			
-			viewer.addText(ss.str(), 10, 10, "frameText", 0);
+			//viewer.addText(ss.str(), 10, 10, "frameText", 0);
 			viewer.addPointCloud(basic_cloud_ptr, "cloud");
 			viewer.setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "cloud");
 			viewer.addCoordinateSystem(1.0);
@@ -157,7 +160,7 @@ int main(int argc, char** argv)
 		viewer.updatePointCloud(basic_cloud_ptr, "cloud");
 		//viewer.addPointCloud(point_cloud_ptr, "cloud");
 
-		viewer.updateText(ss.str(), 10, 10, "frameText");
+		//viewer.updateText(ss.str(), 10, 10, "frameText");
 				
 		viewer.spinOnce(1);		
 	}			

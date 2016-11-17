@@ -1,8 +1,9 @@
 /*
 /////////////////////////////////////////////////
-ver.0.06版
--不限定從零開始存深度值
--刪除不必要的迴圈
+ver.0.07版
+-修正影像缺少1~2度的情況
+	-將martix[1800]->[1809]及角度[900]->[905]
+-刪除不必要的判斷式
 /////////////////////////////////////////////////
 */
 
@@ -26,7 +27,7 @@ using namespace std;
 #define TRFC 4294967040
 #define PI 3.14159265359
 
-float UDP(float matrix[16][1800],float (&AZ)[900])
+float UDP(float matrix[16][1809],float (&AZ)[905])
 {
 	SOCKET s;
 	struct sockaddr_in server, si_other;
@@ -110,20 +111,13 @@ float UDP(float matrix[16][1800],float (&AZ)[900])
 				t[i] = (unsigned int)buf[i];
 
 		}		
-		if (flag == 0)
-		{					
-			flag = 1;
-			ps = 0;			
-		}
-		if (flag == 1)
-		{
-			//每100個byte為兩次掃描 傳一次有1200byte
-			for (int j = ps; j < 1200; j += 100)
+		    //每100個byte為兩次掃描 傳一次有1200byte
+			for (int j = 0; j < 1200; j += 100)
 			{
 				A = t[3 + j] * 256 + t[2 + j];
 				A = A / 100;
 				AZ[z] = A;
-				z++;
+				z = z + 1;
 				//printf("A = %.2f j = %d ps = %d \n", A ,j,ps);
 				for (int i = 0; i < 94; i += 3) //取出第5個和第6個byte做運算得到距離
 				{					
@@ -131,32 +125,32 @@ float UDP(float matrix[16][1800],float (&AZ)[900])
 					tmp = (float)t[j + 4 + i] + ((float)t[j + 5 + i] * 256);
 					tmp = tmp / 500; // T*2/1000
 					matrix[x][y] = tmp;
-					x++;
+					x = x + 1;
 					if (x == 16)
 					{
 						x = 0;
-						y++;
+						y = y + 1;
 					}
-					if (y == 1800)
+					if (y == 1809)
 					{
 						break;
 					}
 				}			
-				if (y == 1800)
+				if (y == 1809)
 				{
 					break;
 				}
 
 			}
-			if (y == 1800)
+			if (y == 1809)
 			{
 				break;
 			}
-		}		
+				
 		
 	}
 	closesocket(s);
-	for (int i = 0; i < 1800; i++) //將Layer放到正確的位置
+	for (int i = 0; i < 1809; i++) //將Layer放到正確的位置
 	{
 		float swapt;
 		swapt = matrix[1][i];
@@ -182,6 +176,6 @@ float UDP(float matrix[16][1800],float (&AZ)[900])
 		matrix[0][i] = swapt;
 	}
 
-	return matrix[16][1800];
+	return matrix[16][1809];
 	
 }
