@@ -24,9 +24,15 @@
     <ClCompile Include="twoDimg.cpp">
       <Filter>原始程式檔</Filter>
     </ClCompile>
+    <ClCompile Include="kitti.cpp">
+      <Filter>原始程式檔</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UDP.h">
+      <Filter>原始程式檔</Filter>
+    </ClInclude>
+    <ClInclude Include="dbscan.h">
       <Filter>原始程式檔</Filter>
     </ClInclude>
   </ItemGroup>

@@ -124,11 +124,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="kitti.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="twoDimg.cpp" />
     <ClCompile Include="UDP.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dbscan.h" />
     <ClInclude Include="UDP.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
